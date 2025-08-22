@@ -22,6 +22,14 @@ app.use(express.json());
 
 app.use(passport.initialize());
 
+app.get("/ping-db", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT 1");
+    res.send("DB OK");
+  } catch (err) {
+    res.status(500).send("DB Error");
+  }
+});
 
 // Routes
 app.use('/auth', authRoutes);
