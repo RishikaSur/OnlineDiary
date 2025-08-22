@@ -50,29 +50,26 @@ router.get('/google',
 
 // Google OAuth callback
 router.get('/google/callback',
-  passport.authenticate('google', { failureRedirect: `${process.env.CLIENT_URL}/login` }),
+  passport.authenticate('google', { failureRedirect: `${process.env.CLIENT_URL}/login`, session: false }),
   (req, res) => {
-    // Successful authentication, generate JWT and redirect with token
+    // Create JWT token for user
     const token = jwt.sign({ id: req.user.id }, process.env.JWT_SECRET, { expiresIn: '1d' });
-    // Redirect to frontend with token as query param or better via cookie/localStorage by frontend fetching this URL
+    
+    // Redirect to client with token
     res.redirect(`${process.env.CLIENT_URL}/oauth-success?token=${token}`);
   }
 );
 
+
 router.delete("/delete-account", authenticateJWT, async (req, res) => {
   try {
     const userId = req.user.id;
+
+    // Delete user from database
     await pool.query("DELETE FROM users WHERE id = $1", [userId]);
 
-    // Destroy Passport session
-    req.logout(err => {
-      if (err) {
-        console.error("Logout error:", err);
-      }
-      req.session.destroy(() => {
-        res.json({ message: "Account deleted successfully" });
-      });
-    });
+    // No session to destroy, just send success response
+    res.json({ message: "Account deleted successfully" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });

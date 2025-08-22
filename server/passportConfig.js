@@ -2,6 +2,7 @@ import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { getUserByGoogleId, createUserWithGoogle, getUserById } from './utils/userUtils.js';
 
+/*
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });
@@ -16,7 +17,7 @@ passport.deserializeUser(async (id, done) => {
   } catch (err) {
     done(err, null);
   }
-});
+});*/
 
 
 // Google OAuth Strategy
